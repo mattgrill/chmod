@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>###</title>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+  <script type="text/javascript">
+    (function ($) {
+      $(document).ready(function(){
+    
+        $.fn.pandaMarkUpdate = function(){
+          return this.each(function() {
+            var $wrapper = $(this).parent();
+            $wrapper.removeClass('panda-mark-active');
+            if ((($(this).attr('type') === 'checkbox') && (this.checked === true)) || (($(this).attr('type') === 'radio') && (this.checked === true))){
+              $wrapper.addClass('panda-mark-active');
+            }
+          });
+        }
+
+        $.fn.pandaMark = function() {
+          return this.each(function() {
+            var $this = $(this);
+            if ($this.attr('type') === 'checkbox') {
+              $this
+                .wrap($('<div>')
+                .addClass('panda-mark-checkbox'))
+                .change(function(){$this.pandaMarkUpdate();});
+            } 
+            else if ($this.attr('type') === 'radio') {
+              $this
+                .wrap($('<div>')
+                .addClass('panda-mark-radio'))
+                .change(function(){
+                  $('input[type=radio][name=' + $this.attr('name') + ']').pandaMarkUpdate();
+                });
+              ;
+            }
+            else {return;}
+
+            $this
+              .pandaMarkUpdate()
+              .addClass('panda-mark-hide');
+            $this.parent().click(function(){
+              $this[0].checked = !$this[0].checked;
+              $this.change();
+            });
+          });
+        }
+
+        $('input[type="checkbox"], input[type="radio"]').pandaMark();
+
+        $('.user').data('octal-output',$('p.user-octal'));
+        $('.group').data('octal-output',$('p.group-octal'));
+        $('.world').data('octal-output',$('p.world-octal'));
+
+        $('.octal .panda-mark-checkbox').on('change', function(e) {
+          var boxes = $(this).parent('.octal').children('div.panda-mark-active').children('input'),
+              octal_sum = 0,
+              octal_output = $(this).parent('.octal').data('octal-output');
+          boxes.each(function(index,element){
+            octal_sum += (element.value)*1;
+          });
+          octal_output.html(octal_sum);
+        });
+
+      });
+    }(jQuery))
+  </script>
+  <link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
+  <style type="text/css">
+    body {
+      font-family: 'Inconsolata', sans-serif;
+      font-size: 4.5em;
+      color: #00FF00;
+      background: #000;
+    }
+
+    .clearfix:after {
+      visibility: hidden;
+      display: block;
+      font-size: 0;
+      content: " ";
+      clear: both;
+      height: 0;
+    }
+
+    .octal{
+      width: 100%;
+    }
+      .octal p {
+        text-align: right;
+        display: inline-block;
+        width: 20%;
+        margin: 0.5em 0;
+      }
+      .octal p.user-octal,
+      .octal p.group-octal,
+      .octal p.world-octal {
+        text-align: center;
+      }
+
+    .panda-mark-hide {
+      opacity: 0;
+      filter: alpha(opacity=0);
+      pointer-events: none;
+    }
+    .panda-mark-checkbox,
+    .panda-mark-radio {
+      display: inline-block;
+      height: 1em;
+      width: 1em;      
+      border-radius: 0.5em;
+      border: 1px solid #00FF00;
+    }
+    .panda-mark-radio {
+      border-radius: 15px;
+    }
+    .panda-mark-active {
+      border: 1px solid #00FF00;
+      background: #00FF00;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="octal user">
+    <p>USER : </p>
+    <input type="checkbox" name="Read" value="4"> Read
+    <input type="checkbox" name="Write" value="2"> Write
+    <input type="checkbox" name="Execute" value="1"> Execute
+    <p class="user-octal">0</p>
+  </div>
+  <div class="octal group">
+    <p>GROUP : </p>
+    <input type="checkbox" name="Read" value="4"> Read
+    <input type="checkbox" name="Write" value="2"> Write
+    <input type="checkbox" name="Execute" value="1"> Execute
+    <p class="group-octal">0</p>
+  </div>
+  <div class="octal world">
+    <p>WORLD : </p>
+    <input type="checkbox" name="Read" value="4"> Read
+    <input type="checkbox" name="Write" value="2"> Write
+    <input type="checkbox" name="Execute" value="1"> Execute
+    <p class="world-octal">0</p>
+  </div>
+</body>
+</html>
